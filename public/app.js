@@ -7,7 +7,7 @@
 var articleHtml = '<div class="row"><div class="col 12"><div class="card">' +
     '<h4 class="card-body"' +
     'id="card=content"><div class="d-flex justify-content-between">' +
-    '<h4 class="card-title">${title}</h4><a href="#" class="btn btn-danger">Save Article</a>' +
+    '<h4 class="card-title">${title}</h4>' +
     '</div></br><p class="card-text">${summary}</p><a href="${link}"'+
     'class="btn btn-primary">View Article</a></div></div></div></div>';
 

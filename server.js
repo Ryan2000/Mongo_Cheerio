@@ -39,7 +39,7 @@ db.once('open', function () {
 //------------------------------------------
 
 
-    // Main route (simple Hello World Message)
+    // Main route
     app.get("/", function (req, res) {
         res.redirect('index.html');
     });
@@ -163,6 +163,23 @@ db.once('open', function () {
             });
         });
     });
+
+    //TODO: add a saved article endpoint
+    app.get("/articles", function (req, res) {
+        //Return every article in the db see example lines 90-99
+        WsjModel.find({}, function(error, doc) {
+            // Log any errors
+            if (error) {
+                console.log(error);
+            }
+            // Or send the doc to the browser as a json object
+            else {
+                res.json(doc);
+            }
+        });
+    });
+
+
 
 
 // Listen on port 3000
