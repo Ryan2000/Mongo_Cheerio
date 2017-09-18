@@ -165,6 +165,7 @@ db.once('open', function () {
     });
 
     //TODO: add a saved article endpoint
+    //add saved article endpoint
     app.get("/articles", function (req, res) {
         //Return every article in the db see example lines 90-99
         WsjModel.find({}, function(error, doc) {
@@ -180,6 +181,18 @@ db.once('open', function () {
     });
 
 
+    //
+    app.post('/articles/delete/:id', function(req, res){
+        WsjModel
+            .deleteOne({'_id': req.params.id})
+            .exec(function(err, doc){
+                if(err){
+                    res.json(err);
+                } else {
+                    res.json('Deleted');
+                }
+            });
+    });
 
 
 // Listen on port 3000
