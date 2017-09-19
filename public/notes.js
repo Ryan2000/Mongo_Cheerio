@@ -24,10 +24,10 @@ $(document).ready(function(){
         $('#add_comment_button').attr('id', id);
         $('#comments').empty();
 
-        var title = data.note.title;
-        var body = data.note.body;
+        $('#title').text(data.title);
 
-        var html = ` <h4>${title}</h4><p>${body}</p><button class="delete">Delete</button>`;
+        var body = data.note.body;
+        var html = `<p>${body}</p><button class="delete">Delete</button>`;
         $('#comments').append(html);
         $('.delete').click(function(){
             alert('clicked');
@@ -36,7 +36,7 @@ $(document).ready(function(){
 
     $('#add_comment_button').click(function(){
         var id = $(this).attr('id');
-        var t = $('#comment_title').val();
+        var t = $('#title').text();
         var b = $('#comment_body').val();
         var url = '/articles/comment/add/' + id;
 
