@@ -30,7 +30,11 @@ app.use(bodyParser.urlencoded({
 
 
 // Database configuration
-var databaseUrl = "mongodb://localhost:27017/news_sites";
+//Use this for local
+//var databaseUrl = "mongodb://localhost:27017/news_sites";
+
+//This one is for heroku
+var databaseUrl = "mongodb://heroku_cpnh1z9z:ef4lfp7cq064cqu2ld3q2ee4ga@ds141474.mlab.com:41474/heroku_cpnh1z9z";
 mongoose.connect(databaseUrl);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
