@@ -8,6 +8,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
         sURLVariables = sPageURL.split('&'),
         sParameterName,
         i;
+    //takes url parameter from browser
 
     for (i = 0; i < sURLVariables.length; i++) {
         sParameterName = sURLVariables[i].split('=');
@@ -15,6 +16,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
         if (sParameterName[0] === sParam) {
             return sParameterName[1] === undefined ? true : sParameterName[1];
         }
+        //searching for key value pair in url string
     }
 };
 $(document).ready(function(){

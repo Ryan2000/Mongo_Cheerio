@@ -17,17 +17,22 @@ $(document).ready(function(){
         //alert("scrape has begun");
 
         $.getJSON("/scrape", function(data) {
+            //get json makes ajax call and receives a data parameter back from server in json format
             $('#articles').empty();
-            // For each one
+            // empties out div on articles.html line 42
             var count = data.count;
+            //variable from server.js line 98 that has count prop
             var articles = data.articles;
 
+
             for (var i = 0; i < articles.length; i++) {
+                //looping through length of articles
                 var title = articles[i].title;
                 var link = articles[i].link;
                 var summary = articles[i].summary;
                 $("#articles").append(articleHtml.replace("${title}", title)
                     .replace("${summary}", summary).replace("${link}", link));
+                //write out html to article div
             }
             alert('Articles Found ' + count);
         });

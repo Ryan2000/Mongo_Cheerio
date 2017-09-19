@@ -167,25 +167,42 @@ db.once('open', function () {
                 });
 
 
+                //takes promises array (find promises) .all in funct executing
+                //chained to .then function which gives us results array
+                //and executes each promise in order
+                //then function
                 Promise.all(findPromises).then(function(results){
                     var savePromises = [];
+                    //create save promises array
                     results.forEach(function(elem){
+                        //go through each element in results array
                         if(elem){
+                            //wsj value.  either undefined or instance of model
                             savePromises.push(elem.save());
+                            //we call save which returns a promise and store in savePromises array
                         }
                     });
                     Promise.all(savePromises).then(function(models){
+                        //similar to first
+                        //except they are now saved to the db as models.
                         models.forEach(function(elem){
                             articles.push(elem);
+                            //pushed into articles array
                         });
                         resolve(articles);
+                        //call the function in order to resolve the promises from line 104
+                        //lots of nested promises
                     });
                 });
             });
             promise.then(function(articles){
+                //this is the promise from line 104, but doesn't run until the .then on 198
+                //articles is an array that comes from resolve on 192
                 json.count = articles.length;
+                //declared on 98
                 json.articles = articles;
                 res.json(json);
+                //express sending json back to web browser
             });
         });
     });
@@ -207,11 +224,15 @@ db.once('open', function () {
     });
 
 
-    //
+    //fired by delete button on articles page
+    // :id is path parameter and corresponds to mongo id assigned to documber
     app.post('/articles/delete/:id', function(req, res){
+        //fires and makes ajax call to this endpoint on the server from browser
         WsjModel
             .deleteOne({'_id': req.params.id})
+            //how it knows to look up which article to delete
             .exec(function(err, doc){
+                //this executes the delete
                 if(err){
                     res.json(err);
                 } else {
@@ -220,11 +241,16 @@ db.once('open', function () {
             });
     });
 
-    //
+    //used when note page loads
+    //jquery get json
+    //get doc id from ajax call
     app.get('/articles/find/:id', function(req, res){
         WsjModel.findOne({'_id': req.params.id})
+            //matching doc ids
             .populate('note')
+            //populate note tab on wsj-model
             .exec(function(err, doc){
+                //executes the function
                 if(err){
                     res.json(err);
                 } else {
@@ -233,8 +259,13 @@ db.once('open', function () {
             })
     });
 
+
+    //2 cases here
+    //1 - no note on article yet
+    //2 - is a note on article and must be updated
     app.post('/articles/comment/update/:id', function(req, res){
         var note = new Note({title: req.body.title,
+            //create a new note in case we need it
             body: req.body.body});
         WsjModel.findOne({'_id': req.params.id})
             .populate('note')
@@ -244,7 +275,10 @@ db.once('open', function () {
                     res.json(err);
                 } else {
                     if(wsjDoc.note){
+                        //Either will be undefined or have note doc
                         Note.findOneAndUpdate({'_id': wsjDoc.note._id}, {'body': req.body.body})
+                            //corresponds with case 2 where has to find a note and update it
+                            //grabbed from text box
                             .exec(function(err, doc){
                                 if(err){
                                     res.json(err);
@@ -254,10 +288,13 @@ db.once('open', function () {
                             });
                     } else {
                         note.save(function(err, noteDoc){
+                            //case 1 if we don't have a new note
+                            // call note.save to save note
                             if(err){
                                 res.json(err);
                             } else {
                                 wsjDoc.update({'note': noteDoc._id})
+                                    //updates the note property on wsj document
                                     .exec(function(err, doc){
                                         if(err){
                                             res.json(err);
