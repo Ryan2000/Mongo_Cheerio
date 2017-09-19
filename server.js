@@ -233,24 +233,43 @@ db.once('open', function () {
             })
     });
 
-    app.post('/articles/comment/add/:id', function(req, res){
+    app.post('/articles/comment/update/:id', function(req, res){
         var note = new Note({title: req.body.title,
             body: req.body.body});
-        note.save(function(error, doc){
-            if(error){
-                console.log(error);
-            } else {
-                WsjModel.findOneAndUpdate({'_id': req.params.id},
-                    {'note': doc._id})
-                    .exec(function(err, doc){
-                        if(err) {
-                            console.log(err);
-                        } else {
-                            res.json(doc);
-                        }
-                    });
-            }
-        })
+        WsjModel.findOne({'_id': req.params.id})
+            .populate('note')
+            .exec(function(err, wsjDoc){
+                if(err){
+                    console.error(err);
+                    res.json(err);
+                } else {
+                    if(wsjDoc.note){
+                        wsjDoc.note.findOneAndUpdate({'body': req.body.body})
+                            .exec(function(err, doc){
+                                if(err){
+                                    res.json(err);
+                                } else {
+                                    res.json(doc);
+                                }
+                            });
+                    } else {
+                        note.save(function(err, noteDoc){
+                            if(err){
+                                res.json(err);
+                            } else {
+                                wsjDoc.update({'note': noteDoc._id})
+                                    .exec(function(err, doc){
+                                        if(err){
+                                            res.json(err);
+                                        } else {
+                                            res.json(doc);
+                                        }
+                                    })
+                            }
+                        })
+                    }
+                }
+            });
     });
 
 

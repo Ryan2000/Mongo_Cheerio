@@ -20,25 +20,22 @@ var getUrlParameter = function getUrlParameter(sParam) {
 $(document).ready(function(){
     var id = getUrlParameter('id');
     $.getJSON('/articles/find/' + id, function( data ){
-        $('.delete').unbind();
-        $('#add_comment_button').attr('id', id);
-        $('#comments').empty();
+
+        $('#update_comment_button').attr('id', id);
+
 
         $('#title').text(data.title);
+        if(data.note && data.note.body){
+            $('#comment_body').val(data.note.body);
+        }
 
-        var body = data.note.body;
-        var html = `<p>${body}</p><button class="delete">Delete</button>`;
-        $('#comments').append(html);
-        $('.delete').click(function(){
-            alert('clicked');
-        });
     });
 
-    $('#add_comment_button').click(function(){
+    $('#update_comment_button').click(function(){
         var id = $(this).attr('id');
         var t = $('#title').text();
         var b = $('#comment_body').val();
-        var url = '/articles/comment/add/' + id;
+        var url = '/articles/comment/update/' + id;
 
         $.post(url, {title: t, body: b}, function(data){
             $('#comment_title').val('');
