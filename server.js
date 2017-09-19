@@ -7,6 +7,8 @@
  */
 // Dependencies
 var fs = require('fs');
+var bodyParser = require("body-parser");
+var logger = require("morgan");
 var express = require("express");
 var mongojs = require("mongojs");
 // Require request and cheerio. This makes the scraping possible
@@ -19,6 +21,14 @@ mongoose.Promise = Promise;
 var app = express();
 app.use(express.static("public"));
 
+// Use morgan and body parser with our app
+app.use(logger("dev"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: false
+}));
+
+
 // Database configuration
 var databaseUrl = "mongodb://localhost:27017/news_sites";
 mongoose.connect(databaseUrl);
@@ -28,12 +38,28 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 //db schema ----------------------------------
 db.once('open', function () {
+
+    var NoteSchema = mongoose.Schema({
+        title: {
+            type: String
+        },
+
+        body: {
+            type: String
+        }
+    });
+
     var wsjSchema = mongoose.Schema({
         title: String,
         link: String,
-        summary: String
+        summary: String,
+        note: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Note"
+        }
     });
 
+    var Note = mongoose.model('Note', NoteSchema);
     var WsjModel = mongoose.model('WSJ-Model', wsjSchema);
 
 //------------------------------------------
@@ -192,6 +218,39 @@ db.once('open', function () {
                     res.json('Deleted');
                 }
             });
+    });
+
+    //
+    app.get('/articles/find/:id', function(req, res){
+        WsjModel.findOne({'_id': req.params.id})
+            .populate('note')
+            .exec(function(err, doc){
+                if(err){
+                    res.json(err);
+                } else {
+                    res.json(doc);
+                }
+            })
+    });
+
+    app.post('/articles/comment/add/:id', function(req, res){
+        var note = new Note({title: req.body.title,
+            body: req.body.body});
+        note.save(function(error, doc){
+            if(error){
+                console.log(error);
+            } else {
+                WsjModel.findOneAndUpdate({'_id': req.params.id},
+                    {'note': doc._id})
+                    .exec(function(err, doc){
+                        if(err) {
+                            console.log(err);
+                        } else {
+                            res.json(doc);
+                        }
+                    });
+            }
+        })
     });
 
 

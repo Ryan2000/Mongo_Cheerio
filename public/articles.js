@@ -9,7 +9,8 @@ $(document).ready(function(){
 
     function loadArticles(){
         //Remove all click listeners
-        $('.delete_button').unbind();
+        $('.delete_button').unbind(); //unbind removes click listener
+        $('.comment_button').unbind(); //New
 
         //Empty the article div
         $('#articles').empty();
@@ -25,7 +26,8 @@ $(document).ready(function(){
                 $("#articles").append(articleHtml.replace("${title}", title)
                     .replace("${summary}", summary)
                     .replace("${link}", link)
-                    .replace("${data-id}", id));
+                    .replace("${data-id}", id)
+                    .replace("${data-id}", id)); //New
             }
 
             $('.delete_button').click(function(){
@@ -36,6 +38,11 @@ $(document).ready(function(){
                     //Refresh the articles on screen
                     loadArticles();
                 });
+            });
+
+            $('.comment_button').click(function(){
+                var id = $(this).attr('data-id');
+                $(this).attr('href', 'notes.html?id='+id).click();
             });
         });
     }
