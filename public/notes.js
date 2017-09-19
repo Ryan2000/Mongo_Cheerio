@@ -38,8 +38,9 @@ $(document).ready(function(){
         var url = '/articles/comment/update/' + id;
 
         $.post(url, {title: t, body: b}, function(data){
-            $('#comment_title').val('');
-            $('#comment_body').val('');
+            //$('#comment_title').val('');
+            //$('#comment_body').val('');
+            alert('Saved');
         }, 'json');
     });
 });

@@ -244,7 +244,7 @@ db.once('open', function () {
                     res.json(err);
                 } else {
                     if(wsjDoc.note){
-                        wsjDoc.note.findOneAndUpdate({'body': req.body.body})
+                        Note.findOneAndUpdate({'_id': wsjDoc.note._id}, {'body': req.body.body})
                             .exec(function(err, doc){
                                 if(err){
                                     res.json(err);
@@ -271,7 +271,6 @@ db.once('open', function () {
                 }
             });
     });
-
 
 // Listen on port 3000
     app.listen(3000, function () {
